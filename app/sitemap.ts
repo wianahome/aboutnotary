@@ -1,35 +1,37 @@
 import type { MetadataRoute } from "next";
-import { getAllPostSlugs } from "@/lib/supabase";
-import { getSiteUrl } from "@/lib/site";
+import { getPublishedPostsForSitemap } from "@/lib/supabase";
+
+const baseUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://aboutnotary.com"
+).replace(/\/$/, "");
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = getSiteUrl();
-  const slugs = await getAllPostSlugs();
+  const publishedPosts = await getPublishedPostsForSitemap();
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: siteUrl,
+      url: baseUrl,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: `${siteUrl}/blog`,
+      url: `${baseUrl}/blog`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/privacy-policy`,
+      url: `${baseUrl}/privacy-policy`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.3,
     },
   ];
 
-  const postRoutes: MetadataRoute.Sitemap = slugs.map((slug) => ({
-    url: `${siteUrl}/blog/${slug}`,
-    lastModified: new Date(),
+  const postRoutes: MetadataRoute.Sitemap = publishedPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.updated_at),
     changeFrequency: "weekly",
     priority: 0.8,
   }));

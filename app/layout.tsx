@@ -3,7 +3,7 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
+import { SITE_DESCRIPTION, SITE_NAME, getSiteUrl } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,9 +20,7 @@ const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
 const isProduction = process.env.NODE_ENV === "production";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  ),
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: SITE_NAME,
     template: `%s | ${SITE_NAME}`,
